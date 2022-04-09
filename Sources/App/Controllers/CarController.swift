@@ -10,7 +10,7 @@ struct CarController: RouteCollection {
         routes.patch(":userID","cars",":carID", use: updateCarHandler)
         routes.get(":userID","cars",":carID", use: getCarHandler)
         routes.get(":userID", "cars", use: getAllCarHandler)
-        routes.delete(":userID","cars",":carID", use: forceDeleteCarHandler)
+        routes.delete(":userID","cars",":carID","force", use: forceDeleteCarHandler)
         routes.delete(":userID","cars",":carID", use: softDeleteModelCarHandler)
     }
     
@@ -21,7 +21,7 @@ struct CarController: RouteCollection {
         }
         let content = try req.content.decode(CreateCarRequest.self)
         let car = Car(name: content.name ?? "",
-                      number: content.number) //?? 0
+                      number: content.number ?? 0)
         return User.query(on: req.db(.psql))
             .filter(\.$id == userID)
             .first()

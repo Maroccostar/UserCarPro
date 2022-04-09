@@ -8,7 +8,7 @@ struct UsersController: RouteCollection {
         routes.post(use: createHandler)
         routes.patch(":userID", use: updateHandler)
         routes.get(":userID", use: getHandler)
-        routes.get(":userID", "all", use: getAllHandler)
+        routes.get("all", use: getAllHandler)
         routes.delete(":userID", "force", use: forceDeleteHandler) //
         routes.delete(":userID", "soft", use: softDeleteModelHandler) //
     }
@@ -23,31 +23,7 @@ struct UsersController: RouteCollection {
         return user.create(on: req.db).map { user }
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     func updateHandler(_ req: Request) throws -> EventLoopFuture<User> {
         let content = try req.content.decode(UpdateUserRequest.self)
         guard let userID = req.parameters.get("userID", as: UUID.self) else {
