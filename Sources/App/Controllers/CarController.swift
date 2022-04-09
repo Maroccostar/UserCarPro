@@ -9,7 +9,7 @@ struct CarController: RouteCollection {
         routes.post(":userID","cars", use: createCarHandler)
         routes.patch(":userID","cars",":carID", use: updateCarHandler)
         routes.get(":userID","cars",":carID", use: getCarHandler)
-        routes.get(":userID", "cars", use: getAllCarHandler)
+        routes.get(":userID", "cars","all", use: getAllCarHandler)
         routes.delete(":userID","cars",":carID","force", use: forceDeleteCarHandler)
         routes.delete(":userID","cars",":carID", use: softDeleteModelCarHandler)
     }

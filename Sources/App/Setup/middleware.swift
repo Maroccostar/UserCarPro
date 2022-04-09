@@ -12,4 +12,7 @@ func middlewares(_ app: Application) throws {
     
     app.middleware.use(RouteLoggingMiddleware(logLevel: .info))
     
+    /// setup error Middleware
+       app.middleware.use(ErrorMiddleware.custom(environment: app.environment))
+    
 }
