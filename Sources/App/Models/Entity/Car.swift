@@ -19,11 +19,10 @@ final class Car: Model, Content {
     
     init() {}
     
-    init(id: UUID? = nil, name: String, number: Int) { //new
-        self.id = id //new
+    init(id: UUID? = nil, name: String, number: Int) {
+        self.id = id
         self.name = name
         self.number = number
-        
     }
     
 }

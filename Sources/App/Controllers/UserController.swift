@@ -15,12 +15,15 @@ struct UsersController: RouteCollection {
     
     
     
-    func createHandler(_ req: Request) throws -> EventLoopFuture<User> {
+    func createHandler(_ req: Request) throws -> EventLoopFuture<UserResponse> {
         let content = try req.content.decode(CreateUserRequest.self)
+        try CreateUserRequest.validate(content: req) // new validations
         let user = User(name: content.name ?? "",
                         username: content.username ?? "",
                         patronymic: content.patronymic ?? "")
-        return user.create(on: req.db).map { user }
+        return user.create(on: req.db).map { _ in // User Response
+            return UserResponse(user: user)// Responce
+        }
     }
     
 
@@ -29,6 +32,7 @@ struct UsersController: RouteCollection {
         guard let userID = req.parameters.get("userID", as: UUID.self) else {
             throw Abort(.notModified)
         }
+        try UpdateUserRequest.validate(content: req) // new validations
         return User.query(on: req.db)
             .filter(\User.$id == userID)
             .first()

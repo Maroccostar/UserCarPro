@@ -7,12 +7,12 @@ struct CreateCar: Migration {
         database.schema("cars")
             .id()
             .field("name", .string, .required)
-            .field("number", .int) //.required
+            .field("number", .int, .required)
             .field("user_id", .uuid, .required, .references(User.schema, .id, onDelete: .cascade, onUpdate: .noAction))
             .create()
     }
     
     func revert(on database: Database) -> EventLoopFuture<Void> {
-        database.schema("car").delete()
+        database.schema("cars").delete()
     }
 }

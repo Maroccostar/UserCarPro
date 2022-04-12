@@ -14,24 +14,32 @@ struct CarController: RouteCollection {
         routes.delete(":userID","cars",":carID", use: softDeleteModelCarHandler)
     }
     
+
     
-    func createCarHandler(_ req: Request) throws -> EventLoopFuture<Car> {
+    func createCarHandler(_ req: Request) throws -> EventLoopFuture<CarResponse> {
         guard let userID = req.parameters.get("userID", as: UUID.self) else {
             throw Abort(.badRequest)
         }
+        try CreateCarRequest.validate(content: req) // new validations
         let content = try req.content.decode(CreateCarRequest.self)
         let car = Car(name: content.name ?? "",
                       number: content.number ?? 0)
-        return User.query(on: req.db(.psql))
-            .filter(\.$id == userID)
-            .first()
-            .unwrap(or: Abort(.notFound))
+        return req.userService.getUser(userID: userID) // Request+Extension
+//        return User.query(on: req.db(.psql)) // in service
+//            .filter(\.$id == userID)
+//            .first()
+//            .unwrap(or: Abort(.notFound))
             .flatMap { user in
                 return user.$car.create([car], on: req.db).map { car }
+                    .map { createCar in
+                        return CarResponse(car: createCar)
+                    }
             }
     }
+        
     
-  
+    
+ 
     
     func updateCarHandler(_ req: Request) throws -> EventLoopFuture<Car> {
         let content = try req.content.decode(UpdateCarRequest.self)
@@ -41,6 +49,8 @@ struct CarController: RouteCollection {
         guard let carID = req.parameters.get("carID", as: UUID.self) else {
             throw Abort(.badRequest)
         }
+        try UpdateCarRequest.validate(content: req) // new validations
+        
         return User.query(on: req.db)
             .filter(\User.$id == userId)
             .first()

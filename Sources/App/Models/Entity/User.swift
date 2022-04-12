@@ -17,14 +17,13 @@ final class User: Model, Content {
     @Field(key: "patronymic")
     var patronymic: String
     
-    @Children(for: \.$user)//new
+    @Children(for: \.$user)
     var car: [Car]
-    
     
     init() {}
     
-    init(id: UUID? = nil, name: String, username: String, patronymic: String) { //new
-        self.id = id //new
+    init(id: UUID? = nil, name: String, username: String, patronymic: String) {
+        self.id = id
         self.name = name
         self.username = username
         self.patronymic = patronymic
