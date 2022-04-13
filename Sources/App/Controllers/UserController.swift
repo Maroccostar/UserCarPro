@@ -17,12 +17,15 @@ struct UsersController: RouteCollection {
     
     func createHandler(_ req: Request) throws -> EventLoopFuture<UserResponse> {
         let content = try req.content.decode(CreateUserRequest.self)
+        
         try CreateUserRequest.validate(content: req) // new validations
+        
         let user = User(name: content.name ?? "",
                         username: content.username ?? "",
                         patronymic: content.patronymic ?? "")
         return user.create(on: req.db).map { _ in // User Response
-            return UserResponse(user: user)// Responce
+            
+            return UserResponse(user: user)// Response
         }
     }
     
