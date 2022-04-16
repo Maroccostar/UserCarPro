@@ -11,6 +11,7 @@ struct UsersController: RouteCollection {
         routes.get("all", use: getAllHandler)
         routes.delete(":userID", "force", use: forceDeleteHandler) //
         routes.delete(":userID", "soft", use: softDeleteModelHandler) //
+        //routes.delete("users", ":userID", "vsDelete", use: remoteUserDbHandler)
     }
     
     
@@ -41,11 +42,10 @@ struct UsersController: RouteCollection {
             .first()
             .unwrap(or: Abort(.notFound))
             .flatMap { user in
-                
                 if let name = content.name {
                     user.name = name
                 }
-                if let username = content.name {
+                if let username = content.username {
                     user.username = username
                 }
                 if let patronymic = content.patronymic {

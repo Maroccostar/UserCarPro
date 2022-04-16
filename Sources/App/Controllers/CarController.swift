@@ -73,19 +73,22 @@ struct CarController: RouteCollection {
     
     
     
-    func getAllCarHandler(_ req: Request) throws -> EventLoopFuture<[Car]> { //CarResponse
+    func getAllCarHandler(_ req: Request) throws -> EventLoopFuture<[CarResponse]> { //CarResponse
         guard let userID = req.parameters.get("userID", as: UUID.self) else {
-            throw Abort(.badRequest)
+            throw Abort(.noContent)
         }
         return req.userService.getUser(userID: userID)
             .flatMap { _ in
                 Car.query(on: req.db)
                     .filter(\Car.$user.$id == userID)
                     .all()
-                //                    .map { createCar in
-                //                        return CarResponse(car: createCar)//CarResponse
-                //                    }
+                    .map { carsResp in
+                        carsResp.map { car in
+                            CarResponse(car: car)//CarResponse
+                        }
+                    }
             }
+        
     }
     
     

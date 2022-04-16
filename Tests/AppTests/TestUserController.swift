@@ -95,6 +95,7 @@ final class TestUserController: XCTestCase {
         })
         try app.test(.DELETE, "/v1/users/\(userID!)/force/",afterResponse: { (res) in
             XCTAssertEqual(res.status, .noContent) //возв только notFound не  noContent
+                
         })
         try app.autoRevert().wait()
     }

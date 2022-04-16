@@ -17,6 +17,15 @@ final class User: Model, Content {
     @Field(key: "patronymic")
     var patronymic: String
     
+//    @Field(key: "create_add")
+//    var create_add: String
+//
+//    @Field(key: "update_add")
+//    var update_add: String
+//
+//    @Field(key: "delete_add")
+//    var delete_add: String
+    
     @Children(for: \.$user)
     var car: [Car]
     

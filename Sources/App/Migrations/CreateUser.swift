@@ -9,6 +9,9 @@ struct CreateUser: Migration {
             .field("name", .string, .required)
             .field("username", .string, .required)
             .field("patronymic", .string, .required)
+//            .field("create_add", .datetime) // new
+//            .field("update_add", .datetime)// new
+//            .field("delete_add", .datetime)// new
             .create()
     }
     
