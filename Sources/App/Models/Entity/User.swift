@@ -36,5 +36,9 @@ final class User: Model, Content {
         self.name = name
         self.username = username
         self.patronymic = patronymic
+        //self.create_add = create_add
+        //self.update_add = update_add
+        //self.delete_add = delete_add
+        
     }
 }
