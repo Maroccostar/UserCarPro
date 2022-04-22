@@ -30,6 +30,7 @@ public func configure(_ app: Application) throws {
     
     app.migrations.add(CreateUser()) //РЕГИСТРАЦИЯ МИГРАЦИИ
     app.migrations.add(CreateCar()) // РЕГИСТРАЦИЯ РЕБЕНКА
+    app.migrations.add(CreateWheels()) // РЕГИСТРАЦИЯ КОЛЕС
     app.logger.logLevel = .info//.debug
     try app.autoMigrate().wait()
     try routes(app)

@@ -17,6 +17,9 @@ final class Car: Model, Content {
     @Parent(key: "user_id")
     var user: User
     
+    @Children(for: \.$car)
+    var wheel: [Wheels]
+    
     init() {}
     
     init(id: UUID? = nil, name: String, number: Int) {

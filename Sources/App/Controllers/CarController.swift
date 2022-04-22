@@ -88,7 +88,6 @@ struct CarController: RouteCollection {
                         }
                     }
             }
-        
     }
     
     
@@ -153,8 +152,6 @@ struct CarController: RouteCollection {
                     }
             }
     }
-    
-    
 }
 
 

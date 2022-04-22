@@ -1,6 +1,7 @@
+
 //
 //  File.swift
-//  
+//
 //
 //  Created by user on 10.04.2022.
 //
@@ -9,106 +10,166 @@ import XCTVapor
 import Foundation
 import Fluent
 
-final class TestUserController: XCTestCase {
+final class TestCarController: XCTestCase {
     
-    func testCreateUser() throws {
+    func testCreateCar() throws {
         let app = Application(.testing)
         defer { app.shutdown() }
         try configure(app)
-        let userRequest = CreateUserRequest(name: "Vasil", username: "Homenko", patronymic: "Vasilovich")
-        try app.test(.POST, "/v1/users",beforeRequest: { req in
-            try req.content.encode(userRequest)
+        let userRequest = CreateUserRequest(name: "H", username: "L", patronymic: "D")
+        var userID: UUID? // create user
+        try app.test(.POST, "/v1/users",beforeRequest: { req in// req test
+            try req.content.encode(userRequest) // code data
+        }, afterResponse: { res in// response comparison
+            XCTAssertEqual(res.status, .ok)
+            let contentType = try XCTUnwrap(res.headers.contentType) //get content type
+            XCTAssertEqual(contentType, .json)// comparison content and json
+            XCTAssertNotNil(res.content)// content != nil
+            XCTAssertContent(UserResponse.self, res) { (content) in// decode
+                userID = content.id //
+                XCTAssertEqual(userRequest.name, content.name)// content value comparison
+                XCTAssertEqual(userRequest.username, content.username)
+                XCTAssertEqual(userRequest.patronymic, content.patronymic)
+            }
+        })
+        let carRequest = CreateCarRequest(name: "Car", number: 1)
+        var carID: UUID?
+        try app.test(.POST, "/v1/users/\(userID!)/cars",beforeRequest: { req in
+            try req.content.encode(carRequest)
         }, afterResponse: { res in
             XCTAssertEqual(res.status, .ok)
             let contentType = try XCTUnwrap(res.headers.contentType)
             XCTAssertEqual(contentType, .json)
             XCTAssertNotNil(res.content)
-            XCTAssertContent(UserResponse.self, res) { (content) in
-                XCTAssertEqual(userRequest.name, content.name)
-                XCTAssertEqual(userRequest.username, content.username)
-                XCTAssertEqual(userRequest.patronymic, content.patronymic)
+            XCTAssertContent(CarResponse.self, res) { (content) in
+                carID = content.id
+                XCTAssertEqual(carRequest.name, content.name)
+                XCTAssertEqual(carRequest.number, content.number)
             }
         })
-        try app.autoRevert().wait()
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    func testUpdateUser() throws {
-        let app = Application(.testing)// service setup
-        defer { app.shutdown() }// service setup
-        try configure(app)// service setup
-        let userRequest = CreateUserRequest(name: "Vasil", username: "Homenko", patronymic: "Vasilovich")
-        var userID: UUID? // create user
-        try app.test(.POST, "/v1/users",beforeRequest: { req in// req test
-            try req.content.encode(userRequest) // code data
-        }, afterResponse: { res in// response comparison
-            XCTAssertEqual(res.status, .ok)
-            let contentType = try XCTUnwrap(res.headers.contentType) //get content type
-            XCTAssertEqual(contentType, .json)// comparison content and json
-            XCTAssertNotNil(res.content)// content != nil
-            XCTAssertContent(UserResponse.self, res) { (content) in// decode
-                userID = content.id //
-                XCTAssertEqual(userRequest.name, content.name)// content value comparison
-                XCTAssertEqual(userRequest.username, content.username)
-                XCTAssertEqual(userRequest.patronymic, content.patronymic)
-            }
-        })
-        let userRequestU = UpdateUserRequest(name: "U", username: "U", patronymic: "U")
-        try app.test(.PATCH, "/v1/users/\(userID!)",beforeRequest: { req in// req test
-            try req.content.encode(userRequestU) // code data
-        }, afterResponse: { res in// response comparison
-            XCTAssertEqual(res.status, .ok)
-            let contentType = try XCTUnwrap(res.headers.contentType) //get content type
-            XCTAssertEqual(contentType, .json)// comparison content and json
-            XCTAssertNotNil(res.content)// content != nil
-            XCTAssertContent(UserResponse.self, res) { (content) in// decode
-                userID = content.id //
-                XCTAssertEqual(userRequestU.name, content.name)// content value comparison
-                XCTAssertEqual(userRequestU.username, content.username)
-                XCTAssertEqual(userRequestU.patronymic, content.patronymic)
-            }
-        })
-        try app.autoRevert().wait()
-    }
-    
-    
-    
-    
-    func testGetUser() throws {
-        let app = Application(.testing)// service setup
-        defer { app.shutdown() }// service setup
-        try configure(app)// service setup
-        let userRequest = CreateUserRequest(name: "Vasil", username: "Homenko", patronymic: "Vasilovich")
-        var userID: UUID? // create user
-        try app.test(.POST, "/v1/users",beforeRequest: { req in// req test
-            try req.content.encode(userRequest) // code data
-        }, afterResponse: { res in// response comparison
-            XCTAssertEqual(res.status, .ok)
-            let contentType = try XCTUnwrap(res.headers.contentType) //get content type
-            XCTAssertEqual(contentType, .json)// comparison content and json
-            XCTAssertNotNil(res.content)// content != nil
-            XCTAssertContent(UserResponse.self, res) { (content) in// decode
-                userID = content.id //
-                XCTAssertEqual(userRequest.name, content.name)// content value comparison
-                XCTAssertEqual(userRequest.username, content.username)
-                XCTAssertEqual(userRequest.patronymic, content.patronymic)
-            }
-        })
-        try app.test(.GET, "/v1/users/\(userID!)",afterResponse: { (res) in
+        try app.test(.GET, "/v1/users/\(userID!)/cars/\(carID!)",afterResponse: { (res) in
             XCTAssertEqual(res.status, .ok)
             let contentType = try XCTUnwrap(res.headers.contentType)
             XCTAssertEqual(contentType, .json)
             XCTAssertNotNil(res.content)// != nil
+            XCTAssertContent(CarResponse.self, res) { (content) in// decode
+                XCTAssertEqual(carRequest.name, content.name)
+                XCTAssertEqual(carRequest.number, content.number)
+            }
+        })
+        try app.autoRevert().wait()
+    }
+    
+    
+    
+    func testUpdateCar() throws {
+        let app = Application(.testing)// service setup
+        defer { app.shutdown() }// service setup
+        try configure(app)// service setup
+        let userRequest = CreateUserRequest(name: "D", username: "R", patronymic: "S")
+        var userID: UUID? // create user
+        try app.test(.POST, "/v1/users",beforeRequest: { req in// req test
+            try req.content.encode(userRequest) // code data
+        }, afterResponse: { res in// response comparison
+            XCTAssertEqual(res.status, .ok)
+            let contentType = try XCTUnwrap(res.headers.contentType) //get content type
+            XCTAssertEqual(contentType, .json)// comparison content and json
+            XCTAssertNotNil(res.content)// content != nil
             XCTAssertContent(UserResponse.self, res) { (content) in// decode
-                XCTAssertEqual(userRequest.name, content.name)// content comparison
+                userID = content.id //
+                XCTAssertEqual(userRequest.name, content.name)// content value comparison
                 XCTAssertEqual(userRequest.username, content.username)
                 XCTAssertEqual(userRequest.patronymic, content.patronymic)
+            }
+        })
+        let carRequest = CreateCarRequest(name: "Ford", number: 5)
+        var carID: UUID?
+        try app.test(.POST, "/v1/users/\(userID!)/cars",beforeRequest: { req in
+            try req.content.encode(carRequest)
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .ok)
+            let contentType = try XCTUnwrap(res.headers.contentType)
+            XCTAssertEqual(contentType, .json)
+            XCTAssertNotNil(res.content)
+            XCTAssertContent(CarResponse.self, res) { (content) in
+                carID = content.id
+                XCTAssertEqual(carRequest.name, content.name)
+                XCTAssertEqual(carRequest.number, content.number)
+            }
+        })
+        try app.test(.GET, "/v1/users/\(userID!)/cars/\(carID!)",afterResponse: { (res) in
+            XCTAssertEqual(res.status, .ok)
+            let contentType = try XCTUnwrap(res.headers.contentType)
+            XCTAssertEqual(contentType, .json)
+            XCTAssertNotNil(res.content)// != nil
+            XCTAssertContent(CarResponse.self, res) { (content) in// decode
+                XCTAssertEqual(carRequest.name, content.name)
+                XCTAssertEqual(carRequest.number, content.number)
+            }
+        })
+        let carRequest2 = UpdateCarRequest(name: "Car2", number: 2)
+        try app.test(.PATCH, "/v1/users/\(userID!)/cars/\(carID!)",beforeRequest: { req in// req test
+            try req.content.encode(carRequest2) // code data
+        }, afterResponse: { res in// response comparison
+            XCTAssertEqual(res.status, .ok)
+            let contentType = try XCTUnwrap(res.headers.contentType) //get content type
+            XCTAssertEqual(contentType, .json)// comparison content and json
+            XCTAssertNotNil(res.content)// content != nil
+            XCTAssertContent(CarResponse.self, res) { (content) in// decode
+                carID = content.id //
+                XCTAssertEqual(carRequest2.name, content.name)
+                XCTAssertEqual(carRequest2.number, content.number)
+            }
+        })
+        try app.autoRevert().wait()
+    }
+    
+    
+    
+    
+    func testGetCar() throws {
+        let app = Application(.testing)// service setup
+        defer { app.shutdown() }// service setup
+        try configure(app)// service setup
+        let userRequest = CreateUserRequest(name: "R", username: "S", patronymic: "T")
+        var userID: UUID? // create user
+        try app.test(.POST, "/v1/users",beforeRequest: { req in// req test
+            try req.content.encode(userRequest) // code data
+        }, afterResponse: { res in// response comparison
+            XCTAssertEqual(res.status, .ok)
+            let contentType = try XCTUnwrap(res.headers.contentType) //get content type
+            XCTAssertEqual(contentType, .json)// comparison content and json
+            XCTAssertNotNil(res.content)// content != nil
+            XCTAssertContent(UserResponse.self, res) { (content) in// decode
+                userID = content.id //
+                XCTAssertEqual(userRequest.name, content.name)// content value comparison
+                XCTAssertEqual(userRequest.username, content.username)
+                XCTAssertEqual(userRequest.patronymic, content.patronymic)
+            }
+        })
+        let carRequest = CreateCarRequest(name: "Fiat", number: 4)
+        var carID: UUID?
+        try app.test(.POST, "/v1/users/\(userID!)/cars",beforeRequest: { req in
+            try req.content.encode(carRequest)
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .ok)
+            let contentType = try XCTUnwrap(res.headers.contentType)
+            XCTAssertEqual(contentType, .json)
+            XCTAssertNotNil(res.content)
+            XCTAssertContent(CarResponse.self, res) { (content) in
+                carID = content.id
+                XCTAssertEqual(carRequest.name, content.name)
+                XCTAssertEqual(carRequest.number, content.number)
+            }
+        })
+        try app.test(.GET, "/v1/users/\(userID!)/cars/\(carID!)",afterResponse: { (res) in
+            XCTAssertEqual(res.status, .ok)
+            let contentType = try XCTUnwrap(res.headers.contentType)
+            XCTAssertEqual(contentType, .json)
+            XCTAssertNotNil(res.content)// != nil
+            XCTAssertContent(CarResponse.self, res) { (content) in// decode
+                XCTAssertEqual(carRequest.name, content.name)
+                XCTAssertEqual(carRequest.number, content.number)
             }
         })
         try app.autoRevert().wait()
@@ -182,7 +243,7 @@ final class TestUserController: XCTestCase {
         let app = Application(.testing)// service setup
         defer { app.shutdown() }// service setup
         try configure(app)// service setup
-        let userRequest = CreateUserRequest(name: "Vasil", username: "Homenko", patronymic: "Vasilovich")
+        let userRequest = CreateUserRequest(name: "G", username: "E", patronymic: "T")
         var userID: UUID? // create user
         try app.test(.POST, "/v1/users",beforeRequest: { req in// req test
             try req.content.encode(userRequest) // code data
@@ -198,9 +259,23 @@ final class TestUserController: XCTestCase {
                 XCTAssertEqual(userRequest.patronymic, content.patronymic)
             }
         })
-        try app.test(.DELETE, "/v1/users/\(userID!)/force/",afterResponse: { (res) in
+        let carRequest = CreateCarRequest(name: "Auto", number: 3)
+        var carID: UUID?
+        try app.test(.POST, "/v1/users/\(userID!)/cars",beforeRequest: { req in
+            try req.content.encode(carRequest)
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .ok)
+            let contentType = try XCTUnwrap(res.headers.contentType)
+            XCTAssertEqual(contentType, .json)
+            XCTAssertNotNil(res.content)
+            XCTAssertContent(CarResponse.self, res) { (content) in
+                carID = content.id
+                XCTAssertEqual(carRequest.name, content.name)
+                XCTAssertEqual(carRequest.number, content.number)
+            }
+        })
+        try app.test(.DELETE, "/v1/users/\(userID!)/cars/\(carID!)/force/",afterResponse: { (res) in
             XCTAssertEqual(res.status, .noContent) //возв только notFound не  noContent
-            
         })
         try app.autoRevert().wait()
     }

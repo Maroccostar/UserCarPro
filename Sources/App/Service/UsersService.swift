@@ -13,7 +13,7 @@ struct UsersService {
     let req: Request
     
     func getUser(userID: UUID) -> EventLoopFuture<User> {
-        return User.query(on: req.db(.psql))// new CarController
+        return User.query(on: req.db(.psql))
             .filter(\.$id == userID)
             .first()
             .unwrap(or: Abort(.notFound))

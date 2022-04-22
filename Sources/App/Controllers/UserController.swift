@@ -34,10 +34,12 @@ struct UsersController: RouteCollection {
             throw Abort(.badRequest)
         }
         try UpdateUserRequest.validate(content: req) // new validations
+        
         return User.query(on: req.db)
             .filter(\User.$id == userID)
             .first()
             .unwrap(or: Abort(.notFound))
+        
             .flatMap { user in
                 if let name = content.name {
                     user.name = name

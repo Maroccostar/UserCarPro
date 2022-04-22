@@ -8,4 +8,6 @@ func routes(_ app: Application) throws {
     try usersRoute.register(collection: usersController)
     let carController = CarController()
     try usersRoute.register(collection: carController)
+    let wheelsController = WheelsController()
+    try usersRoute.register(collection: wheelsController)
 }
