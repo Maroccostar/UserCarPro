@@ -33,12 +33,6 @@ final class TestUserController: XCTestCase {
     }
     
     
-    
-    
-    
-    
-    
-    
     func testUpdateUser() throws {
         let app = Application(.testing)// service setup
         defer { app.shutdown() }// service setup
@@ -116,64 +110,61 @@ final class TestUserController: XCTestCase {
     
     
     
-//    func testGetAllUser() throws {
-//        let app = Application(.testing)// service setup
-//        defer { app.shutdown() }// service setup
-//        try configure(app)// service setup
-//        let userRequest = CreateUserRequest(name: "Vasil", username: "Homenko", patronymic: "Vasilovich")
-//        //var userID: UUID?
-//        try app.test(.POST, "/v1/users",beforeRequest: { req in// req test
-//            try req.content.encode(userRequest) // code data
-//        }, afterResponse: { res in// response comparison
-//            XCTAssertEqual(res.status, .ok)
-//            let contentType = try XCTUnwrap(res.headers.contentType) //get content type
-//            XCTAssertEqual(contentType, .json)// comparison content and json
-//            XCTAssertNotNil(res.content)// content != nil
-//            XCTAssertContent(UserResponse.self, res) { (content) in// decode
-//                //userID = content.id
-//                XCTAssertEqual(userRequest.name, content.name)// content value comparison
-//                XCTAssertEqual(userRequest.username, content.username)
-//                XCTAssertEqual(userRequest.patronymic, content.patronymic)
-//            }
-//        })
-//            let userRequest2 = CreateUserRequest(name: "Vasil2", username: "Homenko2", patronymic: "Vasilovich2")
-//            //var userID2: UUID?
-//            try app.test(.POST, "/v1/users",beforeRequest: { req in// req test
-//                try req.content.encode(userRequest2) // code data
-//            }, afterResponse: { res in// response comparison
-//                XCTAssertEqual(res.status, .ok)
-//                let contentType = try XCTUnwrap(res.headers.contentType) //get content type
-//                XCTAssertEqual(contentType, .json)// comparison content and json
-//                XCTAssertNotNil(res.content)// content != nil
-//                XCTAssertContent(UserResponse.self, res) { (content) in// decode
-//                   // userID2 = content.id
-//                    XCTAssertEqual(userRequest2.name, content.name)// content value comparison
-//                    XCTAssertEqual(userRequest2.username, content.username)
-//                    XCTAssertEqual(userRequest2.patronymic, content.patronymic)
-//                }
-//            })
-//            try app.test(.GET, "/v1/users/all", afterResponse: { (res) in
-//                XCTAssertEqual(res.status, .ok)
-//                let contentType = try XCTUnwrap(res.headers.contentType)
-//                XCTAssertEqual(contentType, .json)
-//                XCTAssertNotNil(res.content)// != nil
-//                //let content = try res.content.decode(UserResponse.self)
-//                //_ = try res.content.decode([UserResponse].self)
-//                XCTAssertContent(UserResponse.self, res) { (content) in// decode
-//                    //_ = try res.content.decode([UserResponse].self)
-//                    XCTAssertEqual(userRequest.name, content.name)// content comparison
-//                    XCTAssertEqual(userRequest.username, content.username)
-//                    XCTAssertEqual(userRequest.patronymic, content.patronymic)
-//                    XCTAssertContent(UserResponse.self, res) { (content) in// decode
-//                        XCTAssertEqual(userRequest2.name, content.name)// content comparison
-//                        XCTAssertEqual(userRequest2.username, content.username)
-//                        XCTAssertEqual(userRequest2.patronymic, content.patronymic)
-//                    }
-//                }
-//            })
-//            try app.autoRevert().wait()
-//        }
-//
+    func testGetAllUser() throws {
+        let app = Application(.testing)// service setup
+        defer { app.shutdown() }// service setup
+        try configure(app)// service setup
+        let userRequest = CreateUserRequest(name: "K", username: "H", patronymic: "O")
+        var userID: UUID?
+        try app.test(.POST, "/v1/users",beforeRequest: { req in// req test
+            try req.content.encode(userRequest) // code data
+        }, afterResponse: { res in// response comparison
+            XCTAssertEqual(res.status, .ok)
+            let contentType = try XCTUnwrap(res.headers.contentType) //get content type
+            XCTAssertEqual(contentType, .json)// comparison content and json
+            XCTAssertNotNil(res.content)// content != nil
+            XCTAssertContent(UserResponse.self, res) { (content) in// decode
+                userID = content.id
+                XCTAssertEqual(userRequest.name, content.name)// content value comparison
+                XCTAssertEqual(userRequest.username, content.username)
+                XCTAssertEqual(userRequest.patronymic, content.patronymic)
+            }
+        })
+        let userRequest2 = CreateUserRequest(name: "J2", username: "H2", patronymic: "N2")
+            var userID2: UUID?
+            try app.test(.POST, "/v1/users",beforeRequest: { req in// req test
+                try req.content.encode(userRequest2) // code data
+            }, afterResponse: { res in// response comparison
+                XCTAssertEqual(res.status, .ok)
+                let contentType = try XCTUnwrap(res.headers.contentType) //get content type
+                XCTAssertEqual(contentType, .json)// comparison content and json
+                XCTAssertNotNil(res.content)// content != nil
+                XCTAssertContent(UserResponse.self, res) { (content) in// decode
+                    userID2 = content.id
+                    XCTAssertEqual(userRequest2.name, content.name)// content value comparison
+                    XCTAssertEqual(userRequest2.username, content.username)
+                    XCTAssertEqual(userRequest2.patronymic, content.patronymic)
+                }
+            })
+            try app.test(.GET, "/v1/users/\(userID!)/\(userID2!)/all", afterResponse: { (res) in
+                XCTAssertEqual(res.status, .ok)
+                let contentType = try XCTUnwrap(res.headers.contentType)
+                XCTAssertEqual(contentType, .json)
+                XCTAssertNotNil(res.content)
+                XCTAssertContent(UserResponse.self, res) { (content) in// decode
+                    XCTAssertEqual(userRequest.name, content.name)// content comparison
+                    XCTAssertEqual(userRequest.username, content.username)
+                    XCTAssertEqual(userRequest.patronymic, content.patronymic)
+                    XCTAssertContent(UserResponse.self, res) { (content) in// decode
+                        XCTAssertEqual(userRequest2.name, content.name)// content comparison
+                        XCTAssertEqual(userRequest2.username, content.username)
+                        XCTAssertEqual(userRequest2.patronymic, content.patronymic)
+                    }
+                }
+            })
+            try app.autoRevert().wait()
+        }
+
     
     
     

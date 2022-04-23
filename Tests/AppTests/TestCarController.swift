@@ -239,7 +239,7 @@ final class TestCarController: XCTestCase {
     
     
     
-    func testDeleteUser() throws {
+    func testDeleteCar() throws {
         let app = Application(.testing)// service setup
         defer { app.shutdown() }// service setup
         try configure(app)// service setup
