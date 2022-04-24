@@ -146,7 +146,7 @@ final class TestUserController: XCTestCase {
                     XCTAssertEqual(userRequest2.patronymic, content.patronymic)
                 }
             })
-            try app.test(.GET, "/v1/users/\(userID!)/\(userID2!)/all", afterResponse: { (res) in
+            try app.test(.GET, "/v1/users/all", afterResponse: { (res) in
                 XCTAssertEqual(res.status, .ok)
                 let contentType = try XCTUnwrap(res.headers.contentType)
                 XCTAssertEqual(contentType, .json)

@@ -16,7 +16,7 @@ struct UpdateCarRequest: Content {
 
 extension UpdateCarRequest: Validatable {
     static func validations(_ validations: inout Validations) {
-        validations.add("name", as: String.self, is: .ascii, required: true)// new valid in name
-        validations.add("number", as: Int.self, required: true)// new valid in number
+        validations.add("name", as: String.self, is: .ascii, required: false)// new valid in name
+        validations.add("number", as: Int.self, required: false)// new valid in number
     }
 }

@@ -142,7 +142,7 @@ struct WheelsController: RouteCollection {
             throw Abort(.badRequest)
         }
         guard let wheelsID = req.parameters.get("wheelsID", as: UUID.self) else {
-            throw Abort(.notFound)
+            throw Abort(.badRequest)
         }
         return req.userService.getUser(userID: userID)
             .flatMap { _ in
@@ -165,7 +165,7 @@ struct WheelsController: RouteCollection {
             throw Abort(.badRequest)
         }
         guard let wheelsID = req.parameters.get("wheelsID", as: UUID.self) else {
-            throw Abort(.notFound)
+            throw Abort(.badRequest)
         }
         return req.userService.getUser(userID: userID)
             .flatMap { user in

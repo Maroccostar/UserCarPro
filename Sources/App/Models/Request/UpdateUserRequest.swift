@@ -16,9 +16,9 @@ struct UpdateUserRequest: Content {
 
 extension UpdateUserRequest: Validatable {
     static func validations(_ validations: inout Validations) {
-        validations.add("name", as: String.self, is: .ascii, required: true)// new valid in name
-        validations.add("username", as: String.self, is: .ascii, required: true)// new valid in number
-        validations.add("patronymic", as: String.self, is: .ascii, required: true)// new valid in name
+        validations.add("name", as: String.self, is: .ascii, required: false)// new valid in name
+        validations.add("username", as: String.self, is: .ascii, required: false)// new valid in number
+        validations.add("patronymic", as: String.self, is: .ascii, required: false)// new valid in name
     }
     
 }

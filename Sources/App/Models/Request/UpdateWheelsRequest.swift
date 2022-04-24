@@ -18,10 +18,10 @@ struct UpdateWheelsRequest: Content {
 
 extension UpdateWheelsRequest: Validatable {
     static func validations(_ validations: inout Validations) {
-        validations.add("frontLeft", as: String.self, is: .ascii, required: true)// new valid in name
-        validations.add("frontRight", as: String.self, is: .ascii, required: true)// new valid in name
-        validations.add("rearLeft", as: String.self, is: .ascii, required: true)// new valid in name
-        validations.add("rearRight", as: String.self, is: .ascii, required: true)// new valid in name
+        validations.add("frontLeft", as: String.self, is: .ascii, required: false)// new valid in name
+        validations.add("frontRight", as: String.self, is: .ascii, required: false)// new valid in name
+        validations.add("rearLeft", as: String.self, is: .ascii, required: false)// new valid in name
+        validations.add("rearRight", as: String.self, is: .ascii, required: false)// new valid in name
     }
 }
 
